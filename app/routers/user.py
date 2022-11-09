@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from ..database import get_db
 from sqlalchemy.orm import Session
-from .. import models, schemas, crud, utils
+from .. import models, schemas, crud, utils, oauth2
 from typing import List
 
 router = APIRouter(
@@ -64,7 +64,7 @@ def update_users_email_by_id(id: int, user: schemas.UpdateUserEmail, db: Session
 
 #update users password by its id
 @router.put("/password/{id}", response_model=schemas.User)
-def update_users_password_by_id(id: int, user: schemas.UpdateUserPassword, db: Session = Depends(get_db)):
+def update_users_password_by_id(id: int, user: schemas.UpdateUserPassword, db: Session = Depends(get_db),  get_current_user: int = Depends(oauth2.get_current_user)):
     user.password = utils.hash(user.password)
     user_query = crud.get_users_by_id(id, db)
     if user_query.first() == None:

@@ -5,14 +5,14 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-username = os.getenv("USERNAME")
-password = os.getenv("PASSWORD")
-host = os.getenv("HOST")
-database = os.getenv("DATABASE")
+username = os.environ["USERNAME"]
+password = os.environ["PASSWORD"]
+host = os.environ["HOST"]
+database = os.environ["DATABASE"]
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@{host}/{database}"
+sql_database_url = f"postgresql://{username}:{password}@{host}/{database}"
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(sql_database_url)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Response, status, HTTPException, Depends
+from fastapi import FastAPI
 from .database import engine
-from . import models, schemas, crud
+from . import models
 from .routers import post, user, auth
 
 models.Base.metadata.create_all(bind=engine)

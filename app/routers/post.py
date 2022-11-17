@@ -17,7 +17,6 @@ def get_posts(db: Session = Depends(get_db)):
 
 #get one post by id
 @router.get("/{id}", response_model=schemas.Post)
-
 def get_posts_by_id(id: int, db: Session = Depends(get_db)):
     post = crud.get_post_by_id(id,db)
     if not post.first():
@@ -27,13 +26,13 @@ def get_posts_by_id(id: int, db: Session = Depends(get_db)):
 
 #create a new post
 @router.post('/', status_code = status.HTTP_201_CREATED, response_model=schemas.Post)
-def create_posts(post : schemas.CreatePost, db: Session = Depends(get_db), user_id = Depends(oauth2.get_current_user)):
+def create_posts(post : schemas.CreatePost, db: Session = Depends(get_db), current_user : int = Depends(oauth2.get_current_user)):
     new_post = crud.create_post(post,db)
     return new_post
 
 #delete a post by its id
 @router.delete("/{id}", status_code = status.HTTP_204_NO_CONTENT)
-def delete_post_by_id(id: int, db: Session= Depends(get_db)):
+def delete_post_by_id(id: int, db: Session= Depends(get_db), current_user : int = Depends(oauth2.get_current_user)):
     post = crud.get_post_by_id(id, db)
     if post.first() == None :
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= f"Post with id: {id} does not exist.")
@@ -42,7 +41,7 @@ def delete_post_by_id(id: int, db: Session= Depends(get_db)):
     
 #update posts by its id
 @router.put("/{id}")
-def update_posts(id: int, post : schemas.CreatePost, db: Session = Depends(get_db)):
+def update_posts(id: int, post : schemas.CreatePost, db: Session = Depends(get_db), current_user : int = Depends(oauth2.get_current_user)):
     post_query = crud.get_post_by_id(id, db)
     if post_query.first() == None :
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= f"post with id: {id} does not exist.")

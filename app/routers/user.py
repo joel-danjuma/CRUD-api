@@ -45,7 +45,7 @@ def create_user(user: schemas.CreateUser, db: Session = Depends(get_db)):
 
 #delete a user by its id
 @router.delete("/{id}", status_code = status.HTTP_204_NO_CONTENT)
-def delete_user_by_id(id: int, db: Session = Depends(get_db)):
+def delete_user_by_id(id: int, db: Session = Depends(get_db), current_user : int = Depends(oauth2.get_current_user)):
     user = crud.get_users_by_id(id, db)
     if user.first() == None :
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= f"User with id: {id} does not exist.")
@@ -54,7 +54,7 @@ def delete_user_by_id(id: int, db: Session = Depends(get_db)):
 
 #update users email by its id
 @router.put("/email/{id}", response_model=schemas.User)
-def update_users_email_by_id(id: int, user: schemas.UpdateUserEmail, db: Session = Depends(get_db)):
+def update_users_email_by_id(id: int, user: schemas.UpdateUserEmail, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     user_query = crud.get_users_by_id(id, db)
     if user_query.first() == None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail= f"User with id: {id} not found")
@@ -64,7 +64,7 @@ def update_users_email_by_id(id: int, user: schemas.UpdateUserEmail, db: Session
 
 #update users password by its id
 @router.put("/password/{id}", response_model=schemas.User)
-def update_users_password_by_id(id: int, user: schemas.UpdateUserPassword, db: Session = Depends(get_db),  get_current_user: int = Depends(oauth2.get_current_user)):
+def update_users_password_by_id(id: int, user: schemas.UpdateUserPassword, db: Session = Depends(get_db),  current_user: int = Depends(oauth2.get_current_user)):
     user.password = utils.hash(user.password)
     user_query = crud.get_users_by_id(id, db)
     if user_query.first() == None:
